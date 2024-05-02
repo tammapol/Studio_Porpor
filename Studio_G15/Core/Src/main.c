@@ -183,10 +183,53 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  //Modbus
+	  easyCase();
+	  switch(base.bS){
+	  case 1:
+		  base.bStatus = 4;
+		  SetShelves();
+		  base.bS = 0;
+		  break;
+	  case 2:
+		  base.bStatus = 4;
+		  SetHome();
+		  base.bS = 0;
+		  break;
+	  case 4:
+		  base.bStatus = 4;
+		  RunJog();
+		  base.bS = 0;
+		  break;
+	  case 8:
+		  base.bStatus = 8;
+		  RunPoint();
+		  base.bS = 0;
+		  break;
+	  default:
+		  registerFrame[0x01].U16 = 0;;
+	  }
+
+	  switch(base.vS){
+	  case 0:
+		  base.Vacuum = 0;
+		  break;
+	  case 1:
+		  base.Vacuum = 1;
+		  break;
+	  }
+
+	  switch(base.gmS){
+	  case 0:
+		  base.Gripper = 0;
+		  break;
+	  case 1:
+		  base.Gripper = 1;
+		  break;
+	  }
+
+
 	  Modbus_Protocal_Worker();
 	  Routine();
-	  Vacuum();
-	  GripperMovement();
 	  //--
 
 	  //Ps2
@@ -891,7 +934,7 @@ void PS2X_Reader()
 			ps2.counts = ps2.counts -1;
 		}
 
-		if (ps2.ps2RX[0] == 72 && registerFrame[0x10].U16 == 0b0001){
+		if (ps2.ps2RX[0] == 72 && base.ShelveMode == 1){
 			base.ShelveMode = 0;
 			registerFrame[0x10].U16 = 0b0000;
 		}
